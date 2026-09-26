@@ -298,6 +298,7 @@ from langgraph.graph.message import MessagesState
 from langgraph.checkpoint.postgres import PostgresSaver
 from langchain_deepseek import ChatDeepSeek
 from langchain.messages import HumanMessage
+import os
 
 from dotenv import load_dotenv
 load_dotenv(override=True)
@@ -334,7 +335,8 @@ builder.add_edge("llm_node", "output_node")
 builder.add_edge("output_node", END)
 
 # 定义并在编译时传递 Checkpointer
-DB_URL = "postgresql://langgraph_user:123456@localhost:5432/langgraph_db?sslmode=disable"
+# 连接串统一放在项目根目录的 .env：DB_URL=postgresql://<user>:<password>@<host>:<port>/<db>?sslmode=disable
+DB_URL = os.getenv("DB_URL")
 with PostgresSaver.from_conn_string(DB_URL) as checkpointer:
     # 示例中为了方便演示直接调用 setup()
     # 实际项目中通常建议把数据库初始化/迁移作为独立步骤处理
